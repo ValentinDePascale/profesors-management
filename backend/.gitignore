@@ -6,6 +6,5 @@ node_modules
 
 
 profesor.controller.ts
-index.ts
 profesor.model.ts
 profesor.routes.ts
