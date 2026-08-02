@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Base de Datos PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: profesores_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: gestion_profesores
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d gestion_profesores"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend Express API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: profesores_backend
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: admin
+      DB_PASSWORD: password123
+      DB_NAME: gestion_profesores
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
