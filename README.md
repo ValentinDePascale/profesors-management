@@ -62,10 +62,10 @@ backend/src/
 
 ## API Endpoints
 
-- `GET/POST /api/profesores`
-- `GET/POST /api/materias`
-- `GET/POST /api/licencias`
-- `GET/POST /api/tipos-licencia`
+- `GET/POST /api/profesors`
+- `GET/POST /api/subjects`
+- `GET/POST /api/licences`
+- `GET/POST /api/license-type`
 
 ---
 
