@@ -4,7 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -17,8 +17,85 @@ model Profesor {
   name String
   surname String
   dni String @unique
-  phone String? 
-  createdAt
+  cuil String @unique
+  phone String?
+  address String
+  maritalStatus MaritalStatus @map("marital_status")
+  birthdate DateTime
+  email String? @unique
+  
+  profesorSubject Profesor_Subject[]
+  License License[]
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("profesors")
 }
+
+
+model Subject{
+  CUPOF Int @id @default(autoincrement())
+  name String
+  year Int
+  module String
+  grade String
+
+  License License[]
+  profesorSubject Profesor_Subject[]
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("subjects")
+}
+
+model Profesor_Subject{
+  id Int @id @default(autoincrement())
+  profesorId Int @map("profesor_id")
+  subjectId Int @map("subject_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  profesor Profesor @relation(fields: [profesorId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [CUPOF], onDelete: Cascade)
+  
+  @@unique([profesorId, subjectId])
+  @@map("profesor_subject")
+}
+
+model License{
+  id Int @id @default(autoincrement())
+  profesorId Int @map("profesor_id")
+  subjectId Int @map("subject_id")
+  articleCode String @map("article_code")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  profesor Profesor @relation(fields: [profesorId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [CUPOF], onDelete: Cascade)
+  licenseType LicenseType @relation(fields: [articleCode], references: [article], onDelete: Restrict)
+
+  @@map("license")
+}
+
+model LicenseType{
+  article String @id
+  description String
+
+  license License[] 
+
+  @@map("license_type")
+}
+
+enum MaritalStatus{
+  SOLTERO
+  CASADO
+  DIVORCIADO
+  VIUDO
+}
+
+
